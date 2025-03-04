@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Offcanvas } from "bootstrap"; 
+import { Offcanvas } from "bootstrap";
 import ChatModal from "./ChatModal"; 
 
 function SideMenu({ isOpen, onClose }) {
