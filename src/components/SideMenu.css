@@ -1,0 +1,21 @@
+.side-menu {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 250px;
+	height: 100%;
+	background-color: #333;
+	transform: translateX(-100%);
+	transition: transform 0.3s ease;
+	z-index: 1050; /* Asegúrate de que esté por debajo del modal */
+}
+
+.side-menu.open {
+	transform: translateX(0);
+}
+
+.side-menu button {
+	position: absolute;
+	top: 20px;
+	right: 20px;
+}

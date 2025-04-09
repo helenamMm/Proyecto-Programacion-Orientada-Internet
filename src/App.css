@@ -40,3 +40,20 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Estilo del modal */
+#chat-modal {
+  position: fixed;
+  z-index: 9999; /* Asegúrate de que el valor sea más alto que el menú lateral */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+}
+
+/* Estilo del menú lateral */
+#chatMenu {
+  position: relative; /* Asegúrate de que el z-index funcione correctamente */
+  z-index: 1000; /* Un valor más bajo que el del modal */
+}

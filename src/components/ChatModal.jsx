@@ -1,78 +1,130 @@
 import React, { useRef, useEffect, useState } from "react";
+import './ChatModal.css';
+import { db } from "../firebase/firebase";
+import {
+  collection,
+  doc,
+  setDoc,
+  addDoc,
+  query,
+  orderBy,
+  onSnapshot,
+  getDoc,
+} from "firebase/firestore";
 
 function ChatModal({ isOpen, onClose, contact }) {
-    const modalRef = useRef(null);
-    const prevFocusRef = useRef(null); // To keep track of the previously focused element
-    const [modalVisible, setModalVisible] = useState(isOpen); // Modal state
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([]);
+  const username = localStorage.getItem("username");
 
-    useEffect(() => {
-        const modalElement = modalRef.current;
+  const chatId = [username, contact].sort().join("_"); // nombre único del chat
+  const chatRef = doc(db, "chats", chatId);
+  const messagesRef = collection(chatRef, "mensajes");
 
-        // Capture the currently focused element
-        const prevFocus = document.activeElement;
-        prevFocusRef.current = prevFocus; // Save it
+  // ⚡ Cargar mensajes en tiempo real
+  useEffect(() => {
+    if (!isOpen) return;
 
-        // If modal is open, show it; if modal is closed, hide it and clean up
-        if (isOpen) {
-            setModalVisible(true);
-            document.body.style.overflow = 'hidden'; // Disable body scroll
-            modalElement.classList.add('show'); // Add the 'show' class manually
-            modalElement.style.display = 'block'; // Ensure modal is visible
-        } else {
-            setModalVisible(false);
-            document.body.style.overflow = ''; // Restore body scroll
-            modalElement.classList.remove('show'); // Remove the 'show' class manually
-            modalElement.style.display = ''; // Hide modal
-        }
+    const q = query(messagesRef, orderBy("timestamp"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const msgs = snapshot.docs.map(doc => doc.data());
+      setMessages(msgs);
+    });
 
-        // Clean up backdrop manually when modal is closed
-        if (!isOpen) {
-            const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) {
-                backdrop.remove(); // Remove the backdrop from the DOM
-            }
-        }
+    return () => unsubscribe();
+  }, [isOpen, contact]);
 
-        // Return focus to the previous element when modal is closed
-        return () => {
-            if (prevFocusRef.current) {
-                prevFocusRef.current.focus();
-            }
-        };
-    }, [isOpen]);
-
-    // Handling the closing of the modal and restoring focus
-    const handleClose = () => {
-        onClose(); // Trigger parent onClose function
+  // 🔄 Asegurar que el chat exista
+  useEffect(() => {
+    const checkChat = async () => {
+      const chatSnap = await getDoc(chatRef);
+      if (!chatSnap.exists()) {
+        await setDoc(chatRef, {
+          "Usuario 1": username,
+          "Usuario 2": contact,
+          timestamp: new Date(),
+        });
+      }
     };
 
-    return (
-        modalVisible && (
-            <div className="modal fade show" ref={modalRef} tabIndex="-1" style={{ display: isOpen ? "block" : "none" }}>
-                <div className="modal-dialog modal-dialog-centered">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title">Chatea con.. {contact}</h5>
-                            <button type="button" className="btn-close" onClick={handleClose}></button>
-                        </div>
-                        <div className="modal-body">
-                            <div className="chat-box border rounded p-3" style={{ height: "300px", overflowY: "auto" }}>
-                                <p><strong>{contact}:</strong> Quiubole</p>
-                                <p><strong>Tú:</strong> Quiubole como estas?</p>
-                            </div>
-                            <div className="mt-3">
-                                <input type="text" className="form-control" placeholder="Escribir..." />
-                            </div>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-primary">Enviar</button>
-                            <button type="button" className="btn btn-secondary" onClick={handleClose}>Cerrar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )
-    );
+    if (isOpen) {
+      checkChat();
+    }
+  }, [isOpen, contact]);
+
+  // 🚀 Enviar mensaje
+  const handleSend = async () => {
+    if (!message.trim()) return;
+
+    await addDoc(messagesRef, {
+      contenido: message,
+      sender: username,
+      receiver: contact,
+      timestamp: new Date(),
+    });
+
+    setMessage("");
+  };
+
+  const handleInputChange = (e) => {
+    setMessage(e.target.value);
+  };
+
+  const handleClose = () => {
+    onClose();
+  };
+
+  return (
+    <div
+      className="chat-modal"
+      style={{
+        position: "fixed",
+        zIndex: 9999,
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        background: "white",
+        padding: "20px",
+        width: "500px",
+        height: "600px",
+      }}
+    >
+      <div className="headerChat">
+        <h5>Chatea con {contact}</h5>
+      </div>
+
+      <div
+        className="chat-box border rounded p-3"
+        style={{ height: "300px", overflowY: "auto" }}
+      >
+        {messages.map((msg, index) => (
+          <p key={index}>
+            <strong>{msg.sender === username ? "Tú" : msg.sender}:</strong>{" "}
+            {msg.contenido}
+          </p>
+        ))}
+      </div>
+
+      <div className="mt-3">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Escribir..."
+          value={message}
+          onChange={handleInputChange}
+        />
+      </div>
+
+      <div className="modal-footer mt-3">
+        <button type="button" className="btn btn-primary" onClick={handleSend}>
+          Enviar
+        </button>
+        <button type="button" className="btn btn-secondary" onClick={handleClose}>
+          Cerrar
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export default ChatModal;

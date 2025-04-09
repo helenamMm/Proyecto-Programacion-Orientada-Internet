@@ -1,0 +1,33 @@
+.chat-modal-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	z-index: 1060; /* Mayor que el SideMenu */
+}
+
+.chat-modal {
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	background-color: white;
+	padding: 20px;
+	width: 300px;
+	border-radius: 10px;
+	z-index: 1061; /* Mayor que el backdrop */
+}
+/* Estilo para el botón de cierre */
+#tache {
+  background-color: #f44336; /* Rojo */
+  color: white; /* Texto blanco */
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  width: 25px;
+  height: 25px;
+}
