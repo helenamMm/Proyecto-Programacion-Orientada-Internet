@@ -9,7 +9,7 @@ function App() {
         <div>
             <Header /> 
             <div className="container text-center mt-4">
-                <h1 className="text-primary">A Tadeo le gusta el chile</h1>
+                <h1 className="text-primary">No te achicopales tutorías</h1>
                 
             </div>
         </div>
