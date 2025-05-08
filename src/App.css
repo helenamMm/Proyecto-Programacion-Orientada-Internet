@@ -57,3 +57,4 @@
   position: relative; /* Asegúrate de que el z-index funcione correctamente */
   z-index: 1000; /* Un valor más bajo que el del modal */
 }
+
