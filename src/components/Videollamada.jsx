@@ -42,6 +42,8 @@ function Videollamada({ isOpen, onClose }) {
 
         <button onClick={hangUp}>Hangup</button>
       </div>
+      <p>Entered Call ID: {inputCallId}</p>
+
     </div>
   );
 }

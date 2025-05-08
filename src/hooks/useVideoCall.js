@@ -99,6 +99,16 @@ export default function useVideoCall() {
     const offerDescription = callData.offer;
     await pc.current.setRemoteDescription(new RTCSessionDescription(offerDescription));
 
+    // Only set remote description if it's not already set
+    if (!pc.current.currentRemoteDescription) {
+    await pc.current.setRemoteDescription(new RTCSessionDescription(offerDescription));
+    }
+
+// Only answer if signaling state is correct
+    if (pc.current.signalingState !== 'have-remote-offer') {
+    console.warn('Skipping createAnswer: not in "have-remote-offer" state');
+    return;
+  } 
     const answerDescription = await pc.current.createAnswer();
     await pc.current.setLocalDescription(answerDescription);
 
