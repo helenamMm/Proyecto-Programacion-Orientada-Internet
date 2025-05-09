@@ -38,9 +38,9 @@ function Videollamada({ isOpen, onClose }) {
           onChange={(e) => setInputCallId(e.target.value)}
           placeholder="Enter Call ID"
         />
-        <button onClick={() => answerCall(inputCallId)}>Answer</button>
+        <button onClick={() => answerCall(inputCallId)}>Contestar</button>
 
-        <button onClick={hangUp}>Hangup</button>
+        <button onClick={hangUp}>Colgar</button>
       </div>
       <p>Entered Call ID: {inputCallId}</p>
 
