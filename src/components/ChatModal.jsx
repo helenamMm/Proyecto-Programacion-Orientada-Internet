@@ -17,8 +17,12 @@ function ChatModal({ isOpen, onClose, contact }) {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const username = localStorage.getItem("username");
+  const isGroup = contact.startsWith("grupo_");
 
-  const chatId = [username, contact].sort().join("_"); // nombre único del chat
+
+  //const chatId = [username, contact].sort().join("_");
+  const chatId = isGroup ? contact : [username, contact].sort().join("_");
+ // nombre único del chat
   const chatRef = doc(db, "chats", chatId);
   const messagesRef = collection(chatRef, "mensajes");
   const [isVideoCallOpen, setIsVideoCallOpen] = useState(false);
@@ -36,22 +40,25 @@ function ChatModal({ isOpen, onClose, contact }) {
   }, [isOpen, contact]);
 
   // 🔄 Asegurar que el chat exista
-  useEffect(() => {
-    const checkChat = async () => {
-      const chatSnap = await getDoc(chatRef);
-      if (!chatSnap.exists()) {
-        await setDoc(chatRef, {
-          "Usuario 1": username,
-          "Usuario 2": contact,
-          timestamp: new Date(),
-        });
-      }
-    };
+ useEffect(() => {
+  const checkChat = async () => {
+    if (isGroup) return; // ⚠️ No crear si es grupo
 
-    if (isOpen) {
-      checkChat();
+    const chatSnap = await getDoc(chatRef);
+    if (!chatSnap.exists()) {
+      await setDoc(chatRef, {
+        "Usuario 1": username,
+        "Usuario 2": contact,
+        timestamp: new Date(),
+      });
     }
-  }, [isOpen, contact]);
+  };
+
+  if (isOpen) {
+    checkChat();
+  }
+}, [isOpen, contact]);
+
 
   // 🚀 Enviar mensaje
   const handleSend = async () => {
@@ -132,13 +139,15 @@ function ChatModal({ isOpen, onClose, contact }) {
           <button type="button" className="btn btn-primary" onClick={handleSend}>
             Enviar
           </button>
-          <button
-            type="button"
-            className="btn btn-success"
-            onClick={() => setIsVideoCallOpen(true)}
-          >
-            Videollamada
-          </button>
+          {!isGroup && (
+    <button
+      type="button"
+      className="btn btn-success"
+      onClick={() => setIsVideoCallOpen(true)}
+    >
+      Videollamada
+    </button>
+  )}
           <button type="button" className="btn btn-secondary" onClick={handleClose}>
             Cerrar
           </button>

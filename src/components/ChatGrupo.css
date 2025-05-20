@@ -1,0 +1,18 @@
+.chat-modal {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 400px;
+  max-height: 500px;
+  background: white;
+  border-top-left-radius: 10px;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  overflow-y: auto;
+  z-index: 9999;
+}
+.mensajes {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}

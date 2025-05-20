@@ -100,7 +100,7 @@ export default function useVideoCall() {
 
     const callData = (await getDoc(callDoc)).data();
     const offerDescription = callData.offer;
-    await pc.current.setRemoteDescription(new RTCSessionDescription(offerDescription));
+    //await pc.current.setRemoteDescription(new RTCSessionDescription(offerDescription)); comente esto pa ver si asi jala 
 
     // Only set remote description if it's not already set
     if (!pc.current.currentRemoteDescription) {

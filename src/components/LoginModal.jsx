@@ -44,14 +44,16 @@ const handleLogin = async () => {
   
       const querySnapshot = await getDocs(q);
   
-      if (!querySnapshot.empty) {
-        const userDoc = querySnapshot.docs[0];
-        const nombreUsuario = userDoc.data().nombre; 
-        onLogin(nombreUsuario); // o puedes pasar el objeto completo: userDoc.data()
-        localStorage.setItem("username", nombreUsuario);
+        if (!querySnapshot.empty) {
+  const userDoc = querySnapshot.docs[0];
+  const nombreUsuario = userDoc.data().nombre;
+  const uid = userDoc.id; // Este es el ID real del documento
 
-        onClose();
-      } else {
+  onLogin({ nombre: nombreUsuario, uid }); // Pasa ambos al estado
+  localStorage.setItem("username", nombreUsuario);
+  localStorage.setItem("uid", uid); // Guarda el ID del usuario
+  onClose();
+} else {
         setError("User not found");
       }
     } catch (error) {
