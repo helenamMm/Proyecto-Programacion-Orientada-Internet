@@ -11,6 +11,7 @@ import { db } from "../firebase/firebase";
 import ChatGrupo from "./ChatGrupo";
 import ChecklistModal from './ChecklistModal';
 import FormularioCrearLista from './FormularioCrearLista';
+import VerListasUsuario from './VerListasUsuario'; // Ajusta la ruta si está en otra carpeta
 
 
 function Header() {
@@ -27,7 +28,12 @@ function Header() {
 
 	const [chatPrivado, setChatPrivado] = useState(null); // para chats 1 a 1
 	const [mostrarCrearLista, setMostrarCrearLista] = useState(false);
-	
+	const [mostrarListas, setMostrarListas] = useState(false);
+
+const toggleListas = () => {
+  setMostrarListas(prev => !prev);
+};
+
 
 
 /*
@@ -129,10 +135,16 @@ const fetchUserGroups = async (uid) => {
 								<i className="bi bi-envelope"></i>
 							</a>
 						</li>
+						
 						<li className="nav-item me-3">
 							<a className="nav-link" href="#" onClick={openSideMenuCursos}>
 								<i className="bi bi-play-btn"></i>
 							</a>
+						</li>
+						<li className="nav-item me-3">
+							<button className="btn btn-primary" onClick={toggleListas}>
+							Ver mis listas
+							</button>
 						</li>
 						<li className="nav-item me-3">
   <button
@@ -209,6 +221,8 @@ const fetchUserGroups = async (uid) => {
     <FormularioCrearLista onCerrar={() => setMostrarCrearLista(false)} />
   </div>
 )}
+{mostrarListas && user && <VerListasUsuario uid={user.uid} />}
+
 
 
 {mostrarCrearGrupo && (

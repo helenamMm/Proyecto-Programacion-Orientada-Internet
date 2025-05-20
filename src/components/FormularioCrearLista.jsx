@@ -27,7 +27,8 @@ function FormularioCrearLista({ onCerrar }) {
       // Guardar la lista en la colección 'listas'
       const listaRef = await addDoc(collection(db, "listas"), {
         titulo,
-        usuario: uid, // <-- Reemplaza con el UID real si lo tienes
+        usuario: uid,
+        completada:false // <-- Reemplaza con el UID real si lo tienes
       });
 
       // Agregar tareas como subcolección
