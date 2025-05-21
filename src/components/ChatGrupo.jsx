@@ -16,8 +16,21 @@ function ChatGrupo({ grupoId, onClose }) {
   const [messages, setMessages] = useState([]);
   const username = localStorage.getItem("username");
   const [nombreGrupo, setNombreGrupo] = useState(""); // nuevo estado
+const obtenerEmojiSticker = (stickerId) => {
+  const emojis = {
+    estrella: "🌟",
+    fuego: "🔥",
+    sticker_8: "🧩",
+    sticker_15: "🏆",
+    sticker_16:"👽", 
+    sticker_18: "😺", 
+    sticker_19:"🤖", 
+    sticker_20:"👾", 
+  };
 
-
+  return emojis[stickerId] || "✨";
+};
+const uid = localStorage.getItem("uid");
   const grupoRef = doc(db, "grupos", grupoId);
   const mensajesRef = collection(grupoRef, "mensajes");
 
@@ -62,6 +75,15 @@ function ChatGrupo({ grupoId, onClose }) {
       sender: username,
       timestamp: new Date(),
     });
+
+      // 2. Incrementar contador de mensajes grupales en el usuario
+    Console.log(uid); 
+  const userRef = doc(db, "usuarios", uid); // asumiendo que username es el ID del usuario
+  await updateDoc(userRef, {
+    mensajesGrupalesEnviados: increment(1),
+  });
+
+  
 
     setMessage("");
   };
